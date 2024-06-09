@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Image Cards</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        /* Custom styles for a more polished look */
+        .image-card {
+            transition: transform 0.3s;
+        }
+
+        .image-card:hover {
+            transform: scale(1.05);
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100">
+    <div class="max-w-7xl mx-auto py-12 px-4 mt-10 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <!-- Left Text Section -->
+            <div class="flex flex-col justify-center">
+                <div class="bg-yellow-200 text-yellow-900 text-sm font-semibold px-3 py-1 rounded-full mb-4">
+                    List Menu
+                </div>
+                <h1 class="text-3xl font-extrabold text-gray-900">Devour bliss, <span
+                        class="italic text-green-600">guaranteed!</span></h1>
+                <p class="mt-4 text-lg text-gray-600">Found your favourite meal here! We present all the foods around
+                    the worlds.</p>
+            </div>
+            <!-- Right Images Section -->
+            <div id="image-container" class="grid grid-cols-2 gap-4">
+                <!-- Image cards will be inserted here by JavaScript -->
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const imageContainer = document.getElementById('image-container');
+
+            // Fetch data from the API
+            function loadImages() {
+                fetch('https://www.themealdb.com/api/json/v1/1/search.php?s=')
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Data fetched from API:', data); // Debugging
+                        if (data.meals) {
+                            const meals = data.meals;
+                            // Select random meals
+                            const selectedMeals = meals.sort(() => 0.5 - Math.random()).slice(0, 4);
+                            // Create image cards
+                            selectedMeals.forEach(meal => {
+                                const card = document.createElement('div');
+                                card.className = 'h-48 w-full rounded-lg overflow-hidden image-card bg-white shadow-md';
+
+                                const img = document.createElement('img');
+                                img.className = 'object-cover w-full h-full';
+                                img.src = meal.strMealThumb;
+                                img.alt = meal.strMeal;
+
+                                card.appendChild(img);
+                                imageContainer.appendChild(card);
+                            });
+                        } else {
+                            console.error('No meals found in the response');
+                        }
+                    })
+                    .catch(error => console.error('Error fetching the API:', error));
+            }
+
+            loadImages(); // Load images on initial load
+        });
+    </script>
+</body>
+
+</html>
+
+
+
+<!-- <div class="max-w-7xl my-10 py-12 px-4 sm:px-6 lg:px-8">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+    
+        <div class="flex flex-col justify-center w-auto">
+            <span
+                class="bg-yellow-200 text-yellow-800 text-sm font-semibold px-2 py-1 rounded-full mb-4 text-center justify-center w-28">List
+                Menu</span>
+            <h1 class="text-5xl font-semibold text-[#634C00]">Devour bliss, <span
+                    class="italic text-[#1C5440]">guaranteed!</span>
+            </h1>
+            <p class="mt-4 text-lg font-medium text-[#634C00]">Found your favourite meal here! We present
+                <br>all
+                the foods
+                around the worlds.
+            </p>
+            <a href="#"
+                class="mt-6 inline-block px-6 py-3 bg-yellow-600 text-white font-semibold rounded-md shadow-md hover:bg-yellow-700 w-1/2 justify-center text-center">Load
+                More</a>
+        </div>
+        
+        <div class="grid grid-cols-2 gap-4">
+            <div id="image-container" class="grid grid-cols-2 gap-4">
+            </div>
+        </div>
+    </div>
+</div> -->
