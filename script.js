@@ -143,3 +143,19 @@ function Menu(e) {
       list.classList.remove("top-[80px]"),
       list.classList.remove("opacity-100"));
 }
+
+document.querySelectorAll(".toggle-icon").forEach((icon) => {
+  icon.addEventListener("click", () => {
+    const content = icon.parentNode.parentNode.nextElementSibling;
+    if (content.classList.contains("hidden")) {
+      content.classList.remove("hidden");
+      content.classList.add("visible");
+      icon.textContent = "-";
+    } else {
+      content.classList.remove("visible");
+      content.classList.add("hidden");
+      icon.textContent = "+";
+    }
+    icon.style.transform = "rotate(180deg)";
+  });
+});
