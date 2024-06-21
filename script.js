@@ -6,6 +6,7 @@ const customAlert = document.getElementById("custom-alert");
 const imageContainer = document.getElementById("image-container");
 const loadMoreButton = document.getElementById("load-more");
 const searchBarButton = document.getElementById("search-bar");
+const mealName = document.getElementById("meal-name");
 
 let images = [];
 let imagesFromApi = [];
@@ -28,11 +29,14 @@ function loadImages(queryData = "") {
       if (data.meals) {
         const meals = data.meals;
 
+        // Reset imagesFromApi array
+        imagesFromApi = [];
+
         // Get meals and random data
         const selectedMeals = meals.sort(() => 0.25 - Math.random());
 
-        // looping random data and add to array variabel named imageFromApi
-        selectedMeals?.forEach((meal) => {
+        // Looping random data and add to array variable named imagesFromApi
+        selectedMeals.forEach((meal) => {
           imagesFromApi.push(meal);
         });
       } else {
@@ -40,28 +44,26 @@ function loadImages(queryData = "") {
       }
     })
     .then(() => {
-      // grouping data meals from imageFromApi variabel with 4 each meal data
+      // Grouping data meals from imagesFromApi variable with 4 each meal data
       const chunkSize = 4;
 
-      // initial value for grouping
+      // Initial value for grouping
       let chunkedData = [];
 
-      // looping imageFromApi variabel
-      // and get expected data is [[], [], [], [], ...etc] and add into chunkedData
+      // Looping imagesFromApi variable
       for (let i = 0; i < imagesFromApi.length; i += chunkSize) {
         chunkedData.push(imagesFromApi.slice(i, i + chunkSize));
       }
 
-      // when data is successfully grouped, get first data for first load
+      // When data is successfully grouped, get first data for first load
       if (chunkedData.length !== 0) {
         chunkedData[0].forEach((meal) => {
-          const image = createImageElement(meal);
-          const card = createCardElement(image);
+          const card = createCardElement(meal);
           imageContainer.appendChild(card);
         });
       }
 
-      // change value of images with chunkedData taken from the first index
+      // Change value of images with chunkedData taken from the first index
       // because the first data or index 0 has been used
       images = chunkedData.slice(1, chunkedData.length);
     })
@@ -81,12 +83,34 @@ function createImageElement(meal) {
 
 // create function for handle create element div
 // so that, it can be used by all other functions
-function createCardElement(image) {
+function createCardElement(meal) {
   const card = document.createElement("div");
   card.className =
-    "aspect-video h-full w-full rounded-lg overflow-hidden image-card bg-white shadow-md";
+    "aspect-video h-full w-full rounded-lg overflow-hidden image-card bg-white shadow-md flex flex-col";
+
+  const image = document.createElement("img");
+  image.className = "object-cover w-full h-48";
+  image.src = meal.strMealThumb;
+  image.alt = meal.strMeal;
+
+  const infoContainer = document.createElement("div");
+  infoContainer.className =
+    "p-4 bg-white flex flex-col justify-center items-start";
+
+  const mealName = document.createElement("h2");
+  mealName.className = "text-lg font-semibold text-gray-800";
+  mealName.textContent = meal.strMeal;
+
+  const mealCountry = document.createElement("p");
+  mealCountry.className = "text-sm text-gray-600";
+  mealCountry.textContent = `Country: ${meal.strArea}`;
+
+  infoContainer.appendChild(mealName);
+  infoContainer.appendChild(mealCountry);
 
   card.appendChild(image);
+  card.appendChild(infoContainer);
+
   return card;
 }
 
